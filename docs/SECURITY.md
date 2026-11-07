@@ -1,20 +1,10 @@
-# Security notes
+# Security
 
-## Threat model
+## Threat Model
 
-`github.com/Trysac/u194-golden-files` is a pure library without I/O. The main risks are:
+### Path Traversal
+Golden file names are validated to ensure they are safe for file system operations. They must match the regex `^[A-Za-z0-9._-]+(/[A-Za-z0-9._-]+)*$` and must be between 1 and 200 bytes. Components such as `..`, absolute paths (e.g., `/abs`), and Windows reserved characters (e.g., `a\b`, `x:y`) are explicitly rejected with `Fatalf` to prevent directory traversal or invalid file operations.
 
-- **Supply chain**: a compromised dependency or CI action. Mitigation: standard library only,
-  `go.sum` verification, `govulncheck` in the local gates, Dependabot weekly updates, actions
-  pinned by commit SHA, minimal workflow permissions.
-- **Leaked secrets**: tokens committed by mistake. Mitigation: `gitleaks` runs in the local gates
-  and in CI; `.env` files are git-ignored.
-- **Untrusted input**: callers may pass hostile strings. Mitigation: validate input and return
-  explicit errors; never use `unsafe` or `os/exec` with untrusted data.
-
-## Publishing
-
-Releases are git tags served through the Go module proxy and checksum database. No registry token
-is stored in the repository.
-
-To report a vulnerability, see [SECURITY.md](../SECURITY.md).
+### Resource Exhaustion
+- **Input Size**: Golden file reads are capped at 64 MiB. Any file exceeding this size triggers a `Fatalf` to prevent memory exhaustion.
+- **Diff Complexity**: If the product of the line count of the expectation and the reality exceeds 4,000,000, the diff algorithm is bypassed, and the library returns a "diff skipped" message to prevent excessive CPU and memory consumption during comparisons.

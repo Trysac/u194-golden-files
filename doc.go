@@ -1,5 +1,8 @@
-// Package goldenfiles is a small, dependency-free Go library: Golden file assertions for Go tests: update via a flag field, normalizers for line endings and volatile text, line diffs and safe names
+// Package goldenfiles provides deterministic, dependency-free golden file
+// testing assertions for Go tests.
 //
-// The public API is every exported identifier of this root package. Functions are pure: they do
-// no I/O, keep no global mutable state and report invalid input through returned errors.
+// Features include atomic snapshot updates via an explicit struct field (without
+// requiring global command-line flags), built-in normalizers for line endings
+// and volatile text (such as dates or IDs), path traversal protection, and
+// readable LCS-based line diffs.
 package goldenfiles

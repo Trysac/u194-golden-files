@@ -9,4 +9,5 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Implement Golden struct assertion helper, line ending and regexp normalizers, safe name validation, and line-by-line diffing.
 - Initial project structure from the factory utility template.
