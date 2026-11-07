@@ -1,30 +1,10 @@
 # Architecture
 
-## Purpose
+`goldenfiles` provides golden file comparison and update logic for Go tests.
 
-`github.com/Trysac/u194-golden-files` is a small, dependency-free Go library: Golden file assertions for Go tests: update via a flag field, normalizers for line endings and volatile text, line diffs and safe names
+## Design Goals
 
-## Shape
-
-```text
-caller code --> package goldenfiles (repository root)
-                    |
-                    +-- pure functions, no I/O, no global mutable state
-                    +-- internal/ (optional private helpers)
-```
-
-- **Public API**: every exported identifier of the root package. Unexported identifiers and
-  `internal/` packages may change without a major version.
-- **Errors**: invalid input returns an error; exported sentinel errors (such as `ErrBlank`) let
-  callers branch with `errors.Is`. The library never panics on input, prints or exits.
-- **Side effects**: none. If a feature needs I/O, accept an interface (`io.Reader` or a small
-  custom one) instead of opening resources, and record the choice in an ADR.
-
-## Quality contract
-
-`scripts/check` is the single definition of the gates; `fabrica.json` tells the factory and CI
-how to run it. See [TESTING.md](TESTING.md).
-
-## Decisions
-
-Architecture decisions are recorded in [decisions/](decisions/) as numbered ADRs.
+1. **Zero External Dependencies**: Implemented strictly with the Go standard library.
+2. **Explicit Update Control**: Avoids registering global flags to prevent collisions. Update behavior is configured via `goldenfiles.Golden{Update: bool}`.
+3. **Safe File Operations**: Names are validated against a strict regex; `..` is disallowed. Files are capped at 64 MiB. Updates are atomic, written through directory-local temporary files.
+4. **Portable Comparisons**: Normalizers handle line-ending differences (CRLF/CR to LF). Diff output uses Myers/LCS algorithm to produce readable line-based differences.

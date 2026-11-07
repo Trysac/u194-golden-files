@@ -1,26 +1,29 @@
-# Project record
+# Project
 
 ## Objective
-
-Golden file assertions for Go tests: update via a flag field, normalizers for line endings and volatile text, line diffs and safe names
+Provide a lightweight, dependency-free, and deterministic golden file assertion library for Go. This package eliminates repetitive test code by standardizing golden file reads, atomic updates, and readable diff generation across Go repositories.
 
 ## Scope
+- Supporting `*testing.T` and `*testing.B` via an injected interface.
+- Normalizing test outputs (line endings, volatile regex-based tokens).
+- Atomic file writes using temporary files and `os.Rename`.
+- Generating readable, line-based diffs for mismatches.
+- JSON golden file assertions.
 
-- In scope: the public API documented in [README.md](../README.md), documented and tested.
-- Out of scope: anything that needs dependencies or I/O without an accepted ADR.
+## Out of Scope
+- Global flags management.
+- Managing snapshot directories per individual test name.
+- JSON-aware structural diffing.
+- Output coloring.
 
-## Timeline
+## Factory run u194 (measured from API usage)
 
-| Date | Event |
-|---|---|
-| 2026 | Repository created from the factory utility template. |
+| Phase | Model | Batch | Input | Output | Cache write | Cache read | Cost (USD) |
+|---|---|---|---|---|---|---|---|
+| generation | gemini-3.8-flash | yes | 4017 | 303 | 0 | 0 | 0.0021 |
+| generation | gemini-3.8-flash | yes | 4017 | 12384 | 0 | 0 | 0.0247 |
+| fix-1 | gemini-3.1-flash-lite | no | 24536 | 411 | 0 | 24383 | 0.0074 |
+| audit | gemini-3.1-flash-lite | no | 23059 | 87 | 0 | 18328 | 0.0064 |
+| docs | gemini-3.1-flash-lite | no | 3104 | 1801 | 0 | 0 | 0.0035 |
 
-## Effort metrics
-
-Measured values only; a value that has not been measured stays "pending measurement".
-
-| Metric | Value |
-|---|---|
-| Tokens (input / output) | pending measurement |
-| Hours (human) | pending measurement |
-| Cost (USD) | pending measurement |
+Total: $0.0440. Prices: Anthropic list prices.
